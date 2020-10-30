@@ -1,31 +1,10 @@
 // index.js
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import asabenehImage from './images/asabeneh.jpg'
 
 // Fuction to show month date year
-
-const showDate = (time) => {
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ]
-
-  const month = months[time.getMonth()].slice(0, 3)
-  const year = time.getFullYear()
-  const date = time.getDate()
-  return ` ${month} ${date}, ${year}`
-}
 
 // User Card Component
 const UserCard = ({ user: { firstName, lastName, image } }) => (
@@ -64,6 +43,7 @@ class Header extends React.Component {
     // the code inside the constructor run before any other code
   }
   render() {
+    console.log(this.props.data)
     const {
       welcome,
       title,
@@ -73,7 +53,7 @@ class Header extends React.Component {
     } = this.props.data
 
     return (
-      <header style={this.props.styles}>
+      <header>
         <div className='header-wrapper'>
           <h1>{welcome}</h1>
           <h2>{title}</h2>
@@ -87,16 +67,6 @@ class Header extends React.Component {
     )
   }
 }
-
-const Count = ({ count, addOne, minusOne }) => (
-  <div>
-    <h1>{count} </h1>
-    <div>
-      <Button text='+1' onClick={addOne} style={buttonStyles} />
-      <Button text='-1' onClick={minusOne} style={buttonStyles} />
-    </div>
-  </div>
-)
 
 // TechList Component
 // class base component
@@ -118,37 +88,24 @@ class Main extends React.Component {
     super(props)
   }
   render() {
-    const {
-      techs,
-      user,
-      greetPeople,
-      handleTime,
-      changeBackground,
-      count,
-      addOne,
-      minusOne,
-      bgStyle,
-    } = this.props
     return (
       <main>
-        <div className='main-wrapper' style={bgStyle}>
+        <div className='main-wrapper'>
           <p>Prerequisite to get started react.js:</p>
           <ul>
-            <TechList techs={techs} />
+            <TechList techs={this.props.techs} />
           </ul>
-          <UserCard user={user} />
+          <UserCard user={this.props.user} />
           <Button
             text='Greet People'
-            onClick={greetPeople}
+            onClick={this.props.greetPeople}
             style={buttonStyles}
           />
-          <Button text='Show Time' onClick={handleTime} style={buttonStyles} />
           <Button
-            text='Change Background'
-            onClick={changeBackground}
+            text='Show Time'
+            onClick={this.props.handleTime}
             style={buttonStyles}
           />
-          <Count count={count} addOne={addOne} minusOne={minusOne} />
         </div>
       </main>
     )
@@ -173,13 +130,6 @@ class Footer extends React.Component {
 }
 
 class App extends React.Component {
-  state = {
-    count: 0,
-    styles: {
-      backgroundColor: 'white',
-      color: 'black',
-    },
-  }
   showDate = (time) => {
     const months = [
       'January',
@@ -201,26 +151,11 @@ class App extends React.Component {
     const date = time.getDate()
     return ` ${month} ${date}, ${year}`
   }
-  addOne = () => {
-    this.setState({ count: this.state.count + 1 })
-  }
-
-  // method which subtract one to the state
-  minusOne = () => {
-    this.setState({ count: this.state.count - 1 })
-  }
   handleTime = () => {
     alert(this.showDate(new Date()))
   }
   greetPeople = () => {
     alert('Welcome to 30 Days Of React Challenge, 2020')
-  }
-  changeBackground = () => {
-    if (this.state.styles.color === "black") {
-      this.setState({styles:{backgroundColor: "#0f172a", color: "white",}});
-    } else {
-      this.setState({styles:{backgroundColor: "white", color: "black",}})
-    }
   }
   render() {
     const data = {
@@ -234,7 +169,7 @@ class App extends React.Component {
       date: 'Oct 7, 2020',
     }
     const techs = ['HTML', 'CSS', 'JavaScript']
-    const date = new Date()
+
     // copying the author from data object to user variable using spread operator
     const user = { ...data.author, image: asabenehImage }
 
@@ -246,12 +181,8 @@ class App extends React.Component {
           techs={techs}
           handleTime={this.handleTime}
           greetPeople={this.greetPeople}
-          changeBackground={this.changeBackground}
-          addOne={this.addOne}
-          minusOne={this.minusOne}
-          count={this.state.count}
-          bgStyle={this.state.changeBackground}
         />
+
         <Footer date={new Date()} />
       </div>
     )
