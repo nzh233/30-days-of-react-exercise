@@ -1,125 +1,84 @@
-import React from 'react'
-import ReactDOM from "react-dom"
-import {Component} from "react"
+import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
 
-const Input = ({type, placeHolder, id, style}) => {
-  console.log(placeHolder);
+const Country = ({
+  country: { name, capital, flag, languages, population, currency },
+}) => {
+  const formatedCapital =
+    capital.length > 0 ? (
+      <>
+        <span>Capital: </span>
+        {capital}
+      </>
+    ) : (
+      ''
+    )
+  const formatLanguage = languages.length > 1 ? `Languages` : `Language`
+  console.log(languages)
   return (
-    <input 
-      type={type} 
-      placeholder={placeHolder} 
-      id={id} 
-      style={style}
-    />
+    <div className='country'>
+      <div className='country_flag'>
+        <img src={flag} alt={name} />
+      </div>
+      <h3 className='country_name'>{name.toUpperCase()}</h3>
+      <div class='country_text'>
+        <p>{formatedCapital}</p>
+        <p>
+          <span>{formatLanguage}: </span>
+          {languages.map((language) => language.name).join(', ')}
+        </p>
+        <p>
+          <span>Population: </span>
+          {population.toLocaleString()}
+        </p>
+        <p>
+          <span>Currency: </span>
+          {currency}
+        </p>
+      </div>
+    </div>
   )
 }
 
-const inputOf = (BaseComp, type="text") => {
-  const types = [
-    {
-      name: "button",
-      bgColor: "black",
-      placeholder: "Button"
-    },
-    {
-      name: "text",
-      bgColor: "f44336",
-      placeholder: "Text"
-    },
-    {
-      name: "textarea",
-      bgColor: "4CAF50",
-      placeholder: "Textarea"
-    },
-    {
-      name: "checkbox",
-      bgColor: "4CAF50",
-      placeholder: "Checkbox"
-    },
-    {
-      name: "file",
-      bgColor: "4CAF50",
-      placeholder: "File"
-    },
-    {
-      name: "hidden",
-      bgColor: "4CAF50",
-      placeholder: "Hidden"
-    },
-    {
-      name: "image",
-      bgColor: "4CAF50",
-      placeholder: "Image"
-    },
-    {
-      name: "radio",
-      bgColor: "4CAF50",
-      placeholder: "Radio"
-    },
-    {
-      name: "reset",
-      bgColor: "4CAF50",
-      placeholder: "Reset"
-    },
-    {
-      name: "password",
-      bgColor: "4CAF50",
-      placeholder: "Password"
-    },
-    {
-      name: "submit",
-      bgColor: "61dbfb"
-    },
-  ]
-  const {bgColor: backgroundColor,placeholder} = types.find((ele) => ele.name === type)
-  const inputStyles = {
-    backgroundColor: backgroundColor||"white",
-    margin: "0",
-    padding: ".5rem",
-    color: "red",
-  }
-  return (props) => {
-    return (
-    <BaseComp 
-      {...props} 
-      style={inputStyles} 
-      type={type} 
-      placeHolder={placeholder}
-    />);
-  }
-}
-
-const ButtonInput = inputOf(Input, "button");
-const CheckboxInput = inputOf(Input, "checkbox");
-const TextInput = inputOf(Input, "text");
-const TextareaInput = inputOf(Input, "textarea")
-const SubmitInput = inputOf(Input, "submit");
-const FileInput = inputOf(Input, "file");
-const HiddenInput = inputOf(Input, "hidden");
-const PasswordInput = inputOf(Input, "password");
-const RadioInput = inputOf(Input, "radio");
-const ResetInput = inputOf(Input, "reset");
-
 class App extends Component {
+  state = {
+    data: [],
+  }
+
+  componentDidMount() {
+    const url = 'https://restcountries.eu/rest/v2/all'
+    fetch(url)
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        console.log(data)
+        this.setState({
+          data,
+        })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
   render() {
     return (
       <div className='App'>
-        <TextInput 
-        />
-        <TextareaInput />
-        <SubmitInput 
-        />
-        <ButtonInput />
-        <CheckboxInput />
-        <TextInput />
-        <FileInput />
-        <HiddenInput />
-        <PasswordInput />
-        <RadioInput />
-        <ResetInput />
+        <h1>React Component Life Cycle</h1>
+        <h1>Calling API</h1>
+        <div>
+          <p>There are {this.state.data.length} countries in the api</p>
+          <div className='countries-wrapper'>
+            {this.state.data.map((country) => (
+              <Country country={country} />
+            ))}
+          </div>
+        </div>
       </div>
     )
   }
 }
+
 const rootElement = document.getElementById('root')
 ReactDOM.render(<App />, rootElement)
