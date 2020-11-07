@@ -5,7 +5,8 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  Redirect
 } from "react-router-dom";
 
 import axios from "axios";
@@ -99,12 +100,14 @@ const DisplayCard = ({
   ) 
 }
 
-const Header = ({catNumber, avgWeight, avgLifeSpan, isDay20}) => {
+const Header = ({catNumber, avgWeight, avgLifeSpan, changeDay}) => {
   return (
     <div id="header-wrapper">
       <h1 id="title">A Cat Display Page</h1>
       <Router>
-        {isDay20 ? <Link to="/day-19">&lt;&lt; Day 19</Link> : <Link to="/day-20">Day 20 &gt;&gt;</Link>}
+        <Redirect from="/" to="/day-19" />
+        <Route path="/day-19" component={() => {changeDay("day-20");return(<Link to="/day-20">Day 20 &gt;&gt;</Link>)}}/>
+        <Route path="/day-20" component={() => {changeDay("day-19");return(<Link to="/day-19">&lt;&lt; Day 19</Link>)}}/>
       </Router>
       <img 
         src="https://www.30daysofreact.com/static/media/favicon.e3a42d29.ico"
@@ -132,10 +135,27 @@ const Button = styled.button`
   letter-spacing: 1.25px;
 `
 
-const Body = ({catData, isDay20, buttons}) => {
+const Body = ({catData, day, buttons}) => {
   return (
     <div id="body">
-      {isDay20 && buttons.map()}
+      <div className="sort-tags">
+        { day === "day-19" && buttons.map(
+          ({
+            text,
+            callback,
+          }) => {
+            return (
+              <Button
+                type="button"
+                onClick={callback}
+                key={`btn-${text}`}
+              >
+                {text}
+              </Button>
+            )
+          }
+        ) }
+      </div>
       {catData.map(
         (data) => {
           return (
@@ -163,11 +183,9 @@ const App = () => {
   const [catData, setCatData] = useState([]);
   const [avgWeight, setAvgWeight] = useState(0);
   const [avgLifeSpan, setAvgLifeSpan] = useState(0);
-  const [buttons, setButtons] = useState([{
-    text: "COUNTRY(X)",
-    callback: () => {},
-  }]);
+  const [buttons, setButtons] = useState([]);
   const [showedData, setShowedData] = useState([]);
+  const [day, setDay] = useState("day-19")
 
   useEffect(() => {
     (async () => {
@@ -184,13 +202,42 @@ const App = () => {
         weightSum += (weightRange[0] + weightRange[1]) / 2;
         lifeSum += (lifeSpanRange[0] + lifeSpanRange[1]) / 2;
       })
-      
+      const countryMap = new Map();
+      data.forEach(
+        (cat) => {
+          const countryName = cat.origin;
+          if (countryMap.has(countryName)) {
+            countryMap.get(countryName).push(cat);
+          } else {
+            countryMap.set(countryName, [cat]);
+          }
+        }
+      )
+      countryMap.set("ALL", data);
+      const buttons = [];
+      countryMap.forEach(
+        (value, key) => {
+          buttons.push(
+            {
+              text: `${key}(${value.length})`,
+              callback: () => {
+                setShowedData(value);
+              },
+            }
+          )
+        }
+      )
       setCatData(data);
       setShowedData(data);
+      setButtons(buttons);
       setAvgLifeSpan((lifeSum / count).toFixed(2));
       setAvgWeight((weightSum / count).toFixed(2));
     })();
   },[]);
+
+  const changeDay = (day) => {
+    setDay(day);
+  }
 
   return (
     <>
@@ -198,10 +245,12 @@ const App = () => {
         catNumber={catData.length}
         avgWeight={avgWeight}
         avgLifeSpan={avgLifeSpan}
-        isDay20={false}
+        changeDay={changeDay}
       />
       <Body 
         catData={showedData}
+        buttons={buttons}
+        day={day}
       />
       <Footer />
     </>
