@@ -1,0 +1,95 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+#root {
+    width: 100%;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 24px;
+    line-height: 1.5;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    color: black;
+    padding: 0 auto;
+}
+#header-wrapper,
+#footer-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #dedede;
+    width: 100%
+}
+#header-wrapper {
+    margin-bottom: 1rem;
+}
+#header-wrapper img {
+    display: block;
+}
+#body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.display-card-wrapper {
+    padding: 2rem 0;
+    height: auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+.display-card {
+    height: 90%;
+    width: 60vw;
+    box-shadow: 0 3px 3px 2px rgba(0, 0, 0, .2);
+    overflow: hidden;
+    font-weight: 500;
+    margin: 0 auto;
+}
+.display-card:hover {
+    animation: shadowDeeper .5s;
+    animation-fill-mode: forwards;
+}
+@keyframes shadowDeeper {
+    0% {
+        box-shadow: 0 3px 3px 2px rgba(0, 0, 0, .2);
+    }
+    100% {
+        box-shadow: 0 8px 5px 4px rgba(0, 0, 0, .2);
+        transform: scale(1.08);
+    }
+}
+.display-card .cat-intro {
+    padding: 2rem;
+}
+.display-card .card-name {
+    font-family: "Merriweather";
+    font-size: 2rem;
+    font-weight: 300;
+}
+.display-card .card-country {
+    font-weight: 1000;
+}
+.display-card span {
+    color: gray;
+}
+.display-card div,
+.display-card p {
+    margin: .5rem 0;
+}
+.display-card .img-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+}
+.img-wrapper img {
+    height: auto;
+    width: 100%;
+
+}
