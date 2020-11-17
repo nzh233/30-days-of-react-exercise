@@ -166,7 +166,7 @@ const PopulationItem = ({data: {country, width, population}}) => {
     return result;
   }
   return (
-    <li className="pop-item">
+    <li className="pop-item" key={country}>
       <div>{country.toString().toUpperCase()}</div>
       <div className="bar">
         <div className="colored-bar" style={barWidth}></div>
